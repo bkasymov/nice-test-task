@@ -1,11 +1,12 @@
-FROM python:3.11-alpine
+FROM golang:1.23-alpine
 
 WORKDIR /app
 
 COPY . .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN go mod tidy && \
+    go build -o main .
 
-EXPOSE 8000
+EXPOSE 8080
 
-CMD ["python", "server.py"]
+CMD ["./main"]

@@ -1,8 +1,6 @@
 name: Lint and SAST
-
 on:
   workflow_call:
-
 jobs:
   lint-and-sast:
     runs-on: ubuntu-latest
@@ -10,18 +8,20 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up Go
+        uses: actions/setup-go@v3
         with:
-          python-version: 3.11
+          go-version: '1.23'
 
-      - name: Install dependencies
+      - name: Install golangci-lint
         run: |
-          python -m pip install --upgrade pip
-          pip install --no-cache-dir flake8 bandit
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.42.1
 
-      - name: Run Flake8 Lint
-        run: flake8 .
+      - name: Run golangci-lint
+        run: golangci-lint run --config .golangci.yml ./...
 
-      - name: Run Bandit SAST
-        run: bandit -r . --exit-zero
+      - name: Install gosec
+        run: go install github.com/securego/gosec/v2/cmd/gosec@latest
+
+      - name: Run gosec
+        run: gosec ./...
