@@ -1,0 +1,33 @@
+name: Release
+
+on:
+    release:
+      types: [published]
+    workflow_dispatch:
+
+jobs:
+  lint-and-sast:
+    name: Lint and SAST
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Lint and SAST
+        uses: ./.github/workflows-reusable/lint-and-sast.yml
+
+  test-and-build:
+    name: Test and Build
+    runs-on: ubuntu-latest
+    needs: lint-and-sast
+    steps:
+      - name: Run Test and Build
+        uses: ./.github/workflows-reusable/test-and-build.yml
+
+      - name: Archive Code
+        run: zip -r code.zip ./*
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./code.zip
+          asset_name: code.zip
+          asset_content_type: application/zip
