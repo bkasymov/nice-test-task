@@ -20,16 +20,19 @@ jobs:
 
   release:
     name: Release
+    needs: [lint-and-sast, test-and-build]
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
       - name: Archive Code
         run: zip -r code.zip ./*
 
-      - name: Upload Release Asset
-        uses: PeerXu/upload-asset@v1
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
         with:
-          file: ./code.zip
-          os: linux
-          suffix: .zip
+          name: 'code-artifact'
+          path: './code.zip'
+          if-no-files-found: 'warn'
+          retention-days: 1
