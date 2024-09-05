@@ -14,7 +14,7 @@ class TestHTTPServer(unittest.TestCase):
         time.sleep(1)
 
     def test_get_request(self):
-        response = requests.get(f"http://localhost:{server.PORT}")
+        response = requests.get(f"http://localhost:{server.PORT}", timeout=5)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.text, "Hello from PSPDFKit Engineer!")
 

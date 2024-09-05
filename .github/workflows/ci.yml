@@ -12,9 +12,12 @@ on:
 jobs:
   lint-and-sast:
     name: Lint and SAST
-    uses: ./.github/workflows-reusable/lint-and-sast.yml@main
+    uses: ./.github/workflows/lint-and-sast.yml
 
   test-and-build:
     name: Test and Build
     needs: lint-and-sast
-    uses: ./.github/workflows-reusable/test-and-build.yml@main
+    uses: ./.github/workflows/test-and-build.yml
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
